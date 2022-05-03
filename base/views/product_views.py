@@ -22,15 +22,15 @@ from rest_framework import status
 
 @api_view(['GET'])
 def getProducts(request):
-    query = request.query_params.get('keyword')
+    query = request.query_params.get('keyword') 
+    
     if query == None:
-        query = ''
-
+        query = '' 
     products = Product.objects.filter(
         name__icontains=query).order_by('-createdAt')
-
+    # print(products)
     page = request.query_params.get('page')
-    paginator = Paginator(products, 4)
+    paginator = Paginator(products,50)
 
     try:
         products = paginator.page(page)
@@ -38,14 +38,51 @@ def getProducts(request):
         products = paginator.page(1)
     except EmptyPage:
         products = paginator.page(paginator.num_pages)
-
     if page == None:
         page = 1
-
     page = int(page)
     print('Page:', page)
     serializer = ProductSerializer(products, many=True)
     return Response({'products': serializer.data, 'page': page, 'pages': paginator.num_pages})
+
+#function to get Selected Category product list
+@api_view(['GET'])
+def getSelectedCategory(request,category):
+    query = request.query_params.get('category')
+    print(category)
+    if query == None:
+        query = ''
+    productCategory = Product.objects.filter(
+        category=category).order_by('-createdAt')
+    
+    serializer = ProductSerializer(productCategory,many=True)
+    return Response({'productCategory':serializer.data})
+
+    
+#function to select only blouse
+@api_view(['GET'])
+def getBlouseProducts(requests):
+    blouse = Product.objects.filter(category='Dress').order_by('-createdAt')
+    print(blouse)
+    serializer = ProductSerializer(blouse, many=True)
+    return  Response(serializer.data)
+#function to select only ThrowOns getThrowONProducts
+@api_view(['GET'])
+def getThrowONProducts(requests):
+    throwOns = Product.objects.filter(category='Throw-on').order_by('-createdAt')
+    serializer = ProductSerializer(throwOns, many=True)
+    return  Response(serializer.data)
+#function method without limiting number of products on the page
+@api_view(['GET'])
+def getProductswithoutPage(request):
+    query = request.query_params.get('keyword')
+    if query == None:
+        query = ''
+
+    productlist = Product.objects.filter(
+        name__icontains=query).order_by('-createdAt')
+    serializer = ProductSerializer(productlist, many=True)
+    return Response({'productlist': serializer.data})
 
 @api_view(['GET'])
 def getTopProducts(requests):

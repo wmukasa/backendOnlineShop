@@ -9,6 +9,12 @@ urlpatterns =[
     # path('',views.getRouters,name="routes"),
 
     path('',views.getProducts,name="products"),
+    path('categoryBlouse/',views.getBlouseProducts,name="blouse-categorylist"),
+    path('categoryThrowOn/',views.getThrowONProducts,name="throwons-categorylist"),
+    
+    path('listProducts/',views.getProductswithoutPage,name="product-withoutPageLimit"),
+    path('categoryProducts/<category>/',views.getSelectedCategory,name="product-categorylist"),
+  
     path('create/',views.createProduct,name="product-create"),
     path('upload/',views.uploadImage,name="image-upload"),
 
